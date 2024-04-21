@@ -1,9 +1,7 @@
 colorscheme desert
 " Flags
-set nocompatible 		" disable compatibility with old-time vi
 set showmatch 			" show matching
 set ignorecase 			" case insensitive
-" set mouse=v			" middle-click paste with
 set hlsearch			" highlight search
 set incsearch			" incremental search
 set tabstop=4			" number of columns occupied by tab
@@ -12,32 +10,19 @@ set expandtab			" converts tabs to white space
 set shiftwidth=4		" width for auto-indents
 set autoindent			" indent a new line the same amount as the line just typed
 set number relativenumber			" add line numbers
-set wildmode=longest,list	" get bash-like tab completions
+" set wildmode=longest,list	" get bash-like tab completions
 set cc=80			" set an 80 column border for good coding style
-set textwidth=80
-set max_line_length="off"
-filetype plugin indent on 	" allow auto-indenting depending on the file type
+" set textwidth=80
+" filetype plugin indent on 	" allow auto-indenting depending on the file type
 syntax on			" syntax highlighting
-" set mouse=a			" enable mouse click
-set mouse=
-" set clipboard=unamedplus	" using system clipboard
-filetype plugin on
+" filetype plugin on
 set cursorline			" highlight current cursor-line
-set ttyfast			" speed up the scrolling in vim
 set spell			" Enable spellcheck
 set noswapfile			" disable creating swap-file
-" set backupdir=~/.cache/vim	" Directory to store backup files
-
-" Plugins-- Set option
-" vim.o.nocompatmpmpatible = 1
-" vim.o.showmatch = 1
-
-"vim.o.ignorecase = 1
-"vim.o.hlsearch = 1
-"vim.o.incsearch
+"
 call plug#begin("~/.vim/plugged")
-" Plugin Section
-" Plug 'dracula/vim', {'as':'dracula'}
+Plug 'airblade/vim-gitgutter'
+Plug 'dracula/vim', {'as':'dracula'}
 Plug 'ryanoasis/vim-devicons'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
@@ -45,16 +30,21 @@ Plug 'scrooloose/nerdtree'
 Plug 'preservim/nerdcommenter'
 Plug 'mhinz/vim-startify'
 Plug 'neoclide/coc.nvim', {'branch':'release'}
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'BurntSushi/ripgrep'
 Plug 'nvim-telescope/telescope-live-grep-args.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'zivyangll/git-blame.vim'
+Plug 'terryma/vim-smooth-scroll'
 
-" Using vim-plug
+" ale
+Plug 'dense-analysis/ale'
+
+" Elixir
 Plug 'elixir-editors/vim-elixir', {'branch':'master'}
+Plug 'GrzegorzKozub/vim-elixirls', { 'do': ':ElixirLsCompileSync' }
 
 " structural editing
 Plug 'guns/vim-sexp'
@@ -121,7 +111,7 @@ require('telescope').setup{
                 i = {
                 ["<C-k>"] = lga_actions.quote_prompt(),
                 ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
-                    }, 
+                    },
                 },
                 -- ... also accept themem settings, for example
                 -- theme = "dropdown", -- use dropdown theme
@@ -142,6 +132,10 @@ nnoremap <A-h> <C-W>H
 nnoremap <A-j> <C-W>J
 nnoremap <A-k> <C-W>K
 nnoremap <C-k> <C-W>k
+
+nnoremap ]h <Plug>(GitGutterNextHunk)
+nnoremap [h <Plug>(GitGutterPrevHunk)
+set updatetime=3
 
 :inoremap ii <Esc>
 :inoremap jk <Esc>
@@ -172,6 +166,8 @@ nnoremap <leader>fg :lua require('telescope').extensions.live_grep_args.live_gre
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
+nnoremap <leader>r <cmd>NERDTreeRefreshRoot<cr>
+
 " treversing buffers
 nnoremap <silent> [b :bprevious<CR>
 nnoremap <silent> ]b :bnext<CR>
@@ -182,3 +178,24 @@ nnoremap <silent> [t :tabprevious<CR>
 nnoremap <silent> ]t :tabnext<CR>
 noremap <silent> [T :tabfirst<CR>
 noremap <silent> ]T :tablast<CR>
+
+" smooth scrolling
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+
+if has('nvim')
+  let s:user_dir = stdpath('config')
+else
+  let s:user_dir = has('win32') ? expand('~/vimfiles') : expand('~/.vim')
+endif
+
+let g:ale_elixir_elixir_ls_release = s:user_dir . '/plugins/vim-elixirls/elixir-ls/release'
+
+" https://github.com/JakeBecker/elixir-ls/issues/54
+let g:ale_elixir_elixir_ls_config = { 'elixirLS': { 'dialyzerEnabled': v:false } }
+
+let g:ale_linters = {}
+let g:ale_linters.elixir = [ 'credo', 'elixir-ls' ]
+
