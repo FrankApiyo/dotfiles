@@ -10,16 +10,12 @@ set expandtab			" converts tabs to white space
 set shiftwidth=4		" width for auto-indents
 set autoindent			" indent a new line the same amount as the line just typed
 set number relativenumber			" add line numbers
-" set wildmode=longest,list	" get bash-like tab completions
 set cc=80			" set an 80 column border for good coding style
-" set textwidth=80
-" filetype plugin indent on 	" allow auto-indenting depending on the file type
 syntax on			" syntax highlighting
-" filetype plugin on
 set cursorline			" highlight current cursor-line
 set spell			" Enable spellcheck
 set noswapfile			" disable creating swap-file
-"
+
 call plug#begin("~/.vim/plugged")
 Plug 'airblade/vim-gitgutter'
 Plug 'dracula/vim', {'as':'dracula'}
@@ -38,6 +34,10 @@ Plug 'nvim-telescope/telescope-live-grep-args.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'zivyangll/git-blame.vim'
 Plug 'terryma/vim-smooth-scroll'
+
+" minimap vim
+" You need to install code-minimap with brew to get this to work
+Plug 'wfxr/minimap.vim', {'branch': 'master'}
 
 " ale
 Plug 'dense-analysis/ale'
@@ -59,12 +59,18 @@ Plug 'guns/vim-clojure-highlight'
 Plug 'Olical/conjure'
 call plug#end()
 
+" minimap configs
+let g:minimap_width = 10
+let g:minimap_auto_start = 1
+let g:minimap_auto_start_win_enter = 1
+let g:minimap_git_colors = 1
+let g:minimap_highlight_search = 1
 " Evaluate clojure buffers on load
 autocmd BufRead *.clj try | silent! Require | catch /^Fireplace/ | endtry
 
 " Git blame does not want conflicts
 nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
-
+"
 let g:NERDTreeWinSize = 30
 let g:NERDTreeAutoCenter = 0
 let g:NERDTreeMinimalUI = 1
