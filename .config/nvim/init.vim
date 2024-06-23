@@ -16,6 +16,7 @@ set cursorline			" highlight current cursor-line
 set spell			" Enable spellcheck
 set noswapfile			" disable creating swap-file
 
+
 call plug#begin("~/.vim/plugged")
 Plug 'airblade/vim-gitgutter'
 Plug 'dracula/vim', {'as':'dracula'}
@@ -36,7 +37,6 @@ Plug 'zivyangll/git-blame.vim'
 Plug 'terryma/vim-smooth-scroll'
 
 " minimap vim
-" You need to install code-minimap with brew to get this to work
 Plug 'wfxr/minimap.vim', {'branch': 'master'}
 
 " ale
@@ -54,6 +54,7 @@ Plug 'tpope/vim-surround'
 
 Plug 'guns/vim-clojure-static'
 Plug 'guns/vim-clojure-highlight'
+Plug 'bfontaine/zprint.vim'
 
 " Conjure!
 Plug 'Olical/conjure'
@@ -65,6 +66,13 @@ let g:minimap_auto_start = 1
 let g:minimap_auto_start_win_enter = 1
 let g:minimap_git_colors = 1
 let g:minimap_highlight_search = 1
+let g:minimap_background_processin = 1
+let maplocalleader = '\'
+
+" zprint configs
+" let g:zprint#options_map = '{:search-config? true}'
+let g:zprint#make_autocmd = v:false
+
 " Evaluate clojure buffers on load
 autocmd BufRead *.clj try | silent! Require | catch /^Fireplace/ | endtry
 
@@ -104,6 +112,18 @@ lua << EOF
 local telescope = require("telescope")
 local lga_actions = require("telescope-live-grep-args.actions")
 require('telescope').setup{
+    defaults = {
+        vimgrep_arguments = {
+            'rg',
+            '--color=never',
+            '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case',
+            '-u' -- thats the new thing
+            },
+    },
     pickers = {
         find_files = {
             hidden = true
@@ -120,9 +140,10 @@ require('telescope').setup{
                     },
                 },
                 -- ... also accept themem settings, for example
-                -- theme = "dropdown", -- use dropdown theme
+                theme = "dropdown", -- use dropdown theme
+                live_grep = { hidden=true },
                 -- theme = {}, -- use own theme spec
-                -- layout_config = { mirror=true }, -- mirror preview pane
+                layout_config = { mirror=true }, -- mirror preview pane
             }
         }
 }
