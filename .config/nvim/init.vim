@@ -27,6 +27,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'preservim/nerdcommenter'
 Plug 'mhinz/vim-startify'
 Plug 'neoclide/coc.nvim', {'branch':'release'}
+Plug 'amiralies/coc-elixir', {'do': 'yarn install && yarn prepack'}
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -35,6 +36,10 @@ Plug 'nvim-telescope/telescope-live-grep-args.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'zivyangll/git-blame.vim'
 Plug 'terryma/vim-smooth-scroll'
+
+Plug 'vim-scripts/indentpython.vim'
+Plug 'Valloric/YouCompleteMe'
+Plug 'nvie/vim-flake8'
 
 " minimap vim
 Plug 'wfxr/minimap.vim', {'branch': 'master'}
@@ -69,6 +74,7 @@ let g:minimap_highlight_search = 1
 let g:minimap_background_processin = 1
 let maplocalleader = '\'
 
+let python_highlight_all=1
 " zprint configs
 " let g:zprint#options_map = '{:search-config? true}'
 let g:zprint#make_autocmd = v:false
@@ -76,8 +82,12 @@ let g:zprint#make_autocmd = v:false
 " Evaluate clojure buffers on load
 autocmd BufRead *.clj try | silent! Require | catch /^Fireplace/ | endtry
 
+" Mark extra whitespace in red
+autocmd BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+
 " Git blame does not want conflicts
 nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
+
 "
 let g:NERDTreeWinSize = 30
 let g:NERDTreeAutoCenter = 0
@@ -140,7 +150,7 @@ require('telescope').setup{
                     },
                 },
                 -- ... also accept themem settings, for example
-                theme = "dropdown", -- use dropdown theme
+                -- theme = "dropdown", -- use dropdown theme
                 live_grep = { hidden=true },
                 -- theme = {}, -- use own theme spec
                 layout_config = { mirror=true }, -- mirror preview pane
@@ -170,6 +180,8 @@ set updatetime=3
 :vnoremap jk <Esc>
 :vnoremap kj <ESc>
 
+" View outline of current file
+nnoremap <silent> <leader>co  :<C-u>CocList outline<CR>
 
 " open file in a text by placing text and gf
 nnoremap gf :vert winc f<cr>
@@ -225,4 +237,6 @@ let g:ale_elixir_elixir_ls_config = { 'elixirLS': { 'dialyzerEnabled': v:false }
 
 let g:ale_linters = {}
 let g:ale_linters.elixir = [ 'credo', 'elixir-ls' ]
+let g:ale_fixers = { 'elixir': ['mix_format']}
+
 
