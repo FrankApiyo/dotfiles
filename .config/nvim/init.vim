@@ -2,6 +2,7 @@ colorscheme desert
 " Flags
 set showmatch 			" show matching
 set ignorecase 			" case insensitive
+set encoding=UTF-8
 set hlsearch			" highlight search
 set incsearch			" incremental search
 set tabstop=4			" number of columns occupied by tab
@@ -16,6 +17,16 @@ set cursorline			" highlight current cursor-line
 set spell			" Enable spellcheck
 set noswapfile			" disable creating swap-file
 
+" Display the ruler
+set ruler
+
+" Highlight the cursor column
+set cursorcolumn
+highlight CursorColumn cterm=NONE ctermbg=darkgrey guibg=lightgrey
+
+" Highlight the cursor line
+set cursorline
+highlight CursorLine cterm=NONE ctermbg=darkgrey guibg=lightgrey
 
 call plug#begin("~/.vim/plugged")
 Plug 'airblade/vim-gitgutter'
@@ -28,7 +39,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'mhinz/vim-startify'
 Plug 'neoclide/coc.nvim', {'branch':'release'}
 Plug 'amiralies/coc-elixir', {'do': 'yarn install && yarn prepack'}
-Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'BurntSushi/ripgrep'
@@ -38,7 +49,7 @@ Plug 'zivyangll/git-blame.vim'
 Plug 'terryma/vim-smooth-scroll'
 
 Plug 'vim-scripts/indentpython.vim'
-Plug 'Valloric/YouCompleteMe'
+" Plug 'Valloric/YouCompleteMe'
 Plug 'nvie/vim-flake8'
 
 " minimap vim
@@ -63,7 +74,29 @@ Plug 'bfontaine/zprint.vim'
 
 " Conjure!
 Plug 'Olical/conjure'
+
+" mason.nvim
+Plug 'williamboman/mason.nvim'
+
+" tailwind
+Plug 'luckasRanarison/tailwind-tools.nvim'
+
+" HTML
+Plug 'mattn/emmet-vim'
 call plug#end()
+
+" mason setup
+lua <<EOF
+require("mason").setup({
+    ui = {
+        icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+        }
+    }
+})
+EOF
 
 " minimap configs
 let g:minimap_width = 10
@@ -72,11 +105,12 @@ let g:minimap_auto_start_win_enter = 1
 let g:minimap_git_colors = 1
 let g:minimap_highlight_search = 1
 let g:minimap_background_processin = 1
-let maplocalleader = '\'
+let maplocalleader = ','
+let mapleader = ','
 
 let python_highlight_all=1
 " zprint configs
-" let g:zprint#options_map = '{:search-config? true}'
+let g:zprint#options_map = '{:search-config? true}'
 let g:zprint#make_autocmd = v:false
 
 " Evaluate clojure buffers on load
@@ -180,6 +214,8 @@ set updatetime=3
 :vnoremap jk <Esc>
 :vnoremap kj <ESc>
 
+nnoremap <leader>rn :%s/\([^\n]\)\n\([^\n]\)/\1 \2/g
+
 " View outline of current file
 nnoremap <silent> <leader>co  :<C-u>CocList outline<CR>
 
@@ -235,8 +271,7 @@ let g:ale_elixir_elixir_ls_release = s:user_dir . '/plugins/vim-elixirls/elixir-
 " https://github.com/JakeBecker/elixir-ls/issues/54
 let g:ale_elixir_elixir_ls_config = { 'elixirLS': { 'dialyzerEnabled': v:false } }
 
-let g:ale_linters = {}
-let g:ale_linters.elixir = [ 'credo', 'elixir-ls' ]
-let g:ale_fixers = { 'elixir': ['mix_format']}
+let g:ale_linters = {'html': ['htmlhint'], 'css': ['stylelint'],'clojure': ['clj-kondo'], 'elixir':[ 'credo', 'elixir-ls' ]}
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'javascript': ['eslint'], 'html': ['prettier', 'html-beautify'], 'css': ['stylelint'], 'elixir': ['mix_format']}
 
-
+let g:ale_fix_on_save = 1
